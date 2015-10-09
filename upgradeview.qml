@@ -142,6 +142,7 @@ Rectangle {
 			btnUpgrade.disabled = true
 			btnVersion.disabled = true
 			if(btnDone.text == "Cancel" && txtStatus.text == "Ready") {
+				btnDone.disabled = true
 				connection.sendMessage("MQ")
 			} else {
 				console.debug("Done Upgrading]")

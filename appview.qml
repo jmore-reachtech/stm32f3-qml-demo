@@ -76,7 +76,7 @@ Rectangle {
         x: 375
         y: 138
         width: 113
-        height: 37
+        height: 57
         textOffBold: true
         textOnBold: true
         textOff: "LED 3 Off"
@@ -96,9 +96,9 @@ Rectangle {
 	Switch{
         id: switch_led5
         x: 375
-        y: 185
+        y: 205
         width: 113
-        height: 37
+        height: 57
         textOffBold: true
         textOnBold: true
         textOff: "LED 5 Off"
