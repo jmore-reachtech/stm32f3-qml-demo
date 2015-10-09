@@ -24,7 +24,7 @@ Rectangle {
 			}
 			
 			if(!mainView.appConnected) {
-				btnDone.disabled = false
+			
 			}
         }
     }
@@ -41,6 +41,7 @@ Rectangle {
 			if(txtStatus.text == "Ready") {
 				btnUpgrade.disabled = false
 				btnVersion.disabled = false
+				btnDone.disabled = false
 			}
 			
 			if(txtStatus.text == "Idle") {
@@ -138,6 +139,8 @@ Rectangle {
 		disabled: true
 		
         onButtonClick: {
+			btnUpgrade.disabled = true
+			btnVersion.disabled = true
 			if(btnDone.text == "Cancel" && txtStatus.text == "Ready") {
 				connection.sendMessage("MQ")
 			} else {
@@ -226,11 +229,20 @@ Rectangle {
 		font.bold: true
 		color: "red"
     }
+	
+	Timer {
+		id:timer1
+		repeat: false
+		interval: 1000
+		
+		onTriggered: {
+			system.execute("/etc/init.d/isp-agent start")
+		}
+	}
 
 	Component.onCompleted: {
 		led_light1.on = mainView.appConnected
-		system.execute("/bin/sleep 1")
-		system.execute("/etc/init.d/isp-agent start")
+		timer1.start()
 	}
 
 }
