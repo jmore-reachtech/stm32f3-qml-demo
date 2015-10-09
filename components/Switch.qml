@@ -34,11 +34,11 @@ Rectangle {
 
     signal buttonClick()
     onButtonClick: {
-        on = !on;
     }
 
     signal buttonPress()
     onButtonPress: {
+		on = !on;
     }
 
     signal buttonRelease()
