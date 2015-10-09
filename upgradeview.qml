@@ -33,9 +33,8 @@ Rectangle {
 		target: txtStatus;
 		onTextChanged: {
 			if(txtStatus.text == "Complete") {
-				btnDone.text = "Done"
-				btnUpgrade.disabled = false
-				btnVersion.disabled = false
+				btnUpgrade.disabled = true
+				btnVersion.disabled = true
 				connection.sendMessage("MQ")
 			}
 			
@@ -46,8 +45,7 @@ Rectangle {
 			
 			if(txtStatus.text == "Idle") {
 				btnDone.text = "Done"
-				btnUpgrade.disabled = true
-				btnVersion.disabled = true
+				btnDone.disabled = false
 			}
 		}
 	}
@@ -119,6 +117,9 @@ Rectangle {
         onButtonClick: {
             console.debug("Run Upgrade")
 			connection.sendMessage("MU");
+			btnUpgrade.disabled = true
+			btnVersion.disabled = true
+			btnDone.disabled = true
         }
     }
 	
@@ -228,6 +229,7 @@ Rectangle {
 
 	Component.onCompleted: {
 		led_light1.on = mainView.appConnected
+		system.execute("/bin/sleep 1")
 		system.execute("/etc/init.d/isp-agent start")
 	}
 

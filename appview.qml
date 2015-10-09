@@ -67,7 +67,6 @@ Rectangle {
             console.debug("Go to Upgrade view")
 			system.execute("/etc/init.d/tio-agent stop")
 			system.execute("/etc/init.d/sio-agent stop")
-			system.execute("/bin/sleep 2")
 			root.message("upgradeview.qml")
         }
     }
