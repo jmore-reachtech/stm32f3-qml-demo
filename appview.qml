@@ -8,12 +8,16 @@ Rectangle {
     width: 800
     height: 480
     color: "#bbe5fb"
+	/* We can send this signal which is caught in mainview */
 	signal message(string msg)
     
+	/* For our system.execute() calls */
 	System {
 		id: system
 	}
 	
+	/* The mainview is listening for notReadyToSend signals. Watch that 
+		that property to make sure are are still connected */
 	Connections {
         target: mainView
         onAppConnectedChanged: {
@@ -21,6 +25,7 @@ Rectangle {
         }
     }
 	
+	/* Visual indicator for connection status */
 	LEDLight {
         id: led_light1
         x: 738
@@ -51,6 +56,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
+	/* Load the firmware screen */
     ImageButton {
         id: button2
         x: 207
@@ -71,6 +77,7 @@ Rectangle {
         }
     }
 	
+	/* Toggle LED on STM32f3 */
 	Switch{
         id: switch_led3
         x: 375
@@ -93,6 +100,7 @@ Rectangle {
         }
     }
 	
+	/* Toggle LED on STM32f3 */
 	Switch{
         id: switch_led5
         x: 375
@@ -115,6 +123,7 @@ Rectangle {
         }
     }
 
+	/* Set the connection status once this screen loads */
 	Component.onCompleted: {
 		led_light1.on = mainView.appConnected
 	}

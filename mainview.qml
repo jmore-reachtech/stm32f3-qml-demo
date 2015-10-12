@@ -2,6 +2,7 @@ import QtQuick 2.0
 import "components"
 import com.reachtech.systemplugin 1.0
 
+/* This page stays loaded for the entire session */
 Rectangle {
     id: mainView
     width: 800
@@ -14,6 +15,7 @@ Rectangle {
 		source: ""
     }
 
+	/* We wait for readyToSend before enabling the GUI */
 	Connections {
         target: connection
         onReadyToSend: {
@@ -27,6 +29,7 @@ Rectangle {
 		}
     }
 	
+	/* Sub screens call this to load a different screen */
     Connections {
         target: loader.item
         onMessage: {
@@ -34,6 +37,7 @@ Rectangle {
         }
     }
 	
+	/* Welcome screen until we are readyToSend */
 	Text {
         id: txtMessage
         anchors.centerIn:parent
@@ -43,6 +47,7 @@ Rectangle {
         visible: true
     }
 
+	/* Any post load stuff can be done here */
 	Component.onCompleted: {
 	}
 

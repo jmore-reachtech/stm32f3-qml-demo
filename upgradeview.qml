@@ -8,17 +8,25 @@ Rectangle {
     width: 800
     height: 480
     color: "#bbe5fb"
+	/* We can send this signal which is caught in mainview */
 	signal message(string msg)
     
+	/* For our system.execute() calls */
 	System {
 		id: system
 	}
 	
+	/* The mainview is listening for notReadyToSend signals. Watch that 
+		that property to make sure are are still connected */
 	Connections {
         target: mainView
         onAppConnectedChanged: {
 			led_light1.on = mainView.appConnected
 			
+			/* When this screen is loaded the previous connection (TIO Agent) 
+				is terminated and the ISP Agent is loaded. Once the ISP Agent 
+				loads we get notified here and we can send the (M)icro (S)tart 
+				message. */
 			if(mainView.appConnected) {
 				connection.sendMessage("MS");
 			}
@@ -29,21 +37,32 @@ Rectangle {
         }
     }
 	
+	/* We need to watch the Status text to know what is happening. The Status text 
+		is set by the ISP Agent
+	*/
 	Connections {
 		target: txtStatus;
 		onTextChanged: {
+			/* After the upgrade is complete the ISP sets our status 
+			to Complete. Ask the ISP Agent for the (M)icro (V)ersion and then
+			send the (M)icro (Q)uit message */
 			if(txtStatus.text == "Complete") {
 				btnUpgrade.disabled = true
 				connection.sendMessage("MV")
 				connection.sendMessage("MQ")
 			}
 			
+			/* When the ISP Agent is ready to accept commands the Status 
+			is set to Ready. We ask for the (M)icro (V)ersion and enable the 
+			Upgrade and Cancel buttons */
 			if(txtStatus.text == "Ready") {
 				btnUpgrade.disabled = false
 				btnDone.disabled = false
 				connection.sendMessage("MV");
 			}
-			
+			/* After we send the (M)icro (Q)uit message above the ISP Agent sets our 
+			status to Idle, indicating the ISP is no longer accepting messages. 
+			Enable the Done button so we can return to the appview screen */
 			if(txtStatus.text == "Idle") {
 				btnDone.text = "Done"
 				btnDone.disabled = false
@@ -51,6 +70,7 @@ Rectangle {
 		}
 	}
 	
+	/* Visual indicator for connection status */
 	LEDLight {
         id: led_light1
         x: 738
@@ -81,6 +101,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 	
+	/* Send the (M)icro (U)pdate message to start the upgrade */
 	ImageButton {
         id: btnUpgrade
         x: 207
@@ -95,6 +116,7 @@ Rectangle {
         font.family: "DejaVu Sans"
 		disabled: true
 		
+		/* Disable all button during the update */
         onButtonClick: {
             console.debug("Run Upgrade")
 			connection.sendMessage("MU");
@@ -103,6 +125,7 @@ Rectangle {
         }
     }
 	
+	/* This button handles both Cancel and Done */
 	ImageButton {
         id: btnDone
         x: 207
@@ -119,10 +142,13 @@ Rectangle {
 		
         onButtonClick: {
 			btnUpgrade.disabled = true
+			/* We decided to not upgrade, send the (M)icro (Q)uit message */
 			if(btnDone.text == "Cancel" && txtStatus.text == "Ready") {
 				btnDone.disabled = true
 				connection.sendMessage("MQ")
 			} else {
+				/*The upgrade is complete. Restart the TIO and SIO agents and 
+				got to the appview screen */
 				console.debug("Done Upgrading]")
 				system.execute("/etc/init.d/tio-agent start")
 				system.execute("/etc/init.d/sio-agent start")
@@ -154,6 +180,7 @@ Rectangle {
     }
 
     TextInput {
+		/* This is how the ISP agent finds the version input field */
         objectName: "micro_input"
         id: micro_input
         x: 521
@@ -176,6 +203,7 @@ Rectangle {
 	
 	Text {
         id: txtStatus
+		/* This is how the ISP agent finds the status input field */
 		objectName: "txtStatus"
         x: 521
         y: 288
@@ -186,6 +214,8 @@ Rectangle {
 		color: "red"
     }
 	
+	/* We use a timer here since we need to delay in order to give the SIO and TIO 
+	agents time to cleanly shut down before we bring up the ISP Agent */
 	Timer {
 		id:timer1
 		repeat: false
@@ -196,6 +226,7 @@ Rectangle {
 		}
 	}
 
+	/* After the screen loads set the visual indicator and start a timer */
 	Component.onCompleted: {
 		led_light1.on = mainView.appConnected
 		timer1.start()
