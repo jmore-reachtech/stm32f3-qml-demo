@@ -34,14 +34,14 @@ Rectangle {
 		onTextChanged: {
 			if(txtStatus.text == "Complete") {
 				btnUpgrade.disabled = true
-				btnVersion.disabled = true
+				connection.sendMessage("MV")
 				connection.sendMessage("MQ")
 			}
 			
 			if(txtStatus.text == "Ready") {
 				btnUpgrade.disabled = false
-				btnVersion.disabled = false
 				btnDone.disabled = false
+				connection.sendMessage("MV");
 			}
 			
 			if(txtStatus.text == "Idle") {
@@ -80,31 +80,11 @@ Rectangle {
         font.pixelSize: 30
         anchors.horizontalCenter: parent.horizontalCenter
     }
-
-    ImageButton {
-        id: btnVersion
-        x: 207
-        y: 138
-        width: 113
-        height: 70
-        text: "Version"
-        imageUp: "images/internal_button_up.bmp"
-        font.pixelSize: 20
-        textColor: "#000000"
-        imageDown: "images/internal_button_dn.bmp"
-        font.family: "DejaVu Sans"
-		disabled: true
-		
-        onButtonClick: {
-            console.debug("Get Version")
-			connection.sendMessage("MV");
-        }
-    }
 	
 	ImageButton {
         id: btnUpgrade
         x: 207
-        y: 213
+        y: 138
         width: 113
         height: 70
         text: "Upgrade"
@@ -119,7 +99,6 @@ Rectangle {
             console.debug("Run Upgrade")
 			connection.sendMessage("MU");
 			btnUpgrade.disabled = true
-			btnVersion.disabled = true
 			btnDone.disabled = true
         }
     }
@@ -127,7 +106,7 @@ Rectangle {
 	ImageButton {
         id: btnDone
         x: 207
-        y: 288
+        y: 213
         width: 113
         height: 70
         text: "Cancel"
@@ -140,7 +119,6 @@ Rectangle {
 		
         onButtonClick: {
 			btnUpgrade.disabled = true
-			btnVersion.disabled = true
 			if(btnDone.text == "Cancel" && txtStatus.text == "Ready") {
 				btnDone.disabled = true
 				connection.sendMessage("MQ")
@@ -186,29 +164,6 @@ Rectangle {
         font.family: "DejaVu Sans"
         font.pixelSize: 18
     }
-
-    Text {
-        id: text3
-        x: 413
-        y: 203
-        width: 96
-        height: 27
-        text: qsTr("App: ")
-        font.family: "DejaVu Sans"
-        font.pixelSize: 18
-    }
-
-    TextInput {
-        objectName: "app_input"
-        id: app_input
-        x: 521
-        y: 203
-        width: 75
-        height: 26
-        text: qsTr("?")
-        font.family: "DejaVu Sans"
-        font.pixelSize: 18
-    }
 	
 	Text {
         id: text4
@@ -234,7 +189,7 @@ Rectangle {
 	Timer {
 		id:timer1
 		repeat: false
-		interval: 1000
+		interval: 2000
 		
 		onTriggered: {
 			system.execute("/etc/init.d/isp-agent start")
