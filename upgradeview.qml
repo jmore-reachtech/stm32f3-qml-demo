@@ -16,8 +16,8 @@ Rectangle {
 		id: system
 	}
 	
-	/* The mainview is listening for notReadyToSend signals. Watch that 
-		that property to make sure are are still connected */
+	/* The mainview is listening for readyToSend signals. Watch that 
+		that property to make sure we are still connected */
 	Connections {
         target: mainView
         onAppConnectedChanged: {
@@ -45,7 +45,7 @@ Rectangle {
 		onTextChanged: {
 			/* After the upgrade is complete the ISP sets our status 
 			to Complete. Ask the ISP Agent for the (M)icro (V)ersion and then
-			send the (M)icro (Q)uit message */
+			send the (M)icro (Q)uit message. The upgrade is done at this point */
 			if(txtStatus.text == "Complete") {
 				btnUpgrade.disabled = true
 				connection.sendMessage("MV")
@@ -116,7 +116,7 @@ Rectangle {
         font.family: "DejaVu Sans"
 		disabled: true
 		
-		/* Disable all button during the update */
+		/* Disable all buttons during the update */
         onButtonClick: {
             console.debug("Run Upgrade")
 			connection.sendMessage("MU");
@@ -148,7 +148,7 @@ Rectangle {
 				connection.sendMessage("MQ")
 			} else {
 				/*The upgrade is complete. Restart the TIO and SIO agents and 
-				got to the appview screen */
+				go to the appview screen */
 				console.debug("Done Upgrading]")
 				system.execute("/etc/init.d/tio-agent start")
 				system.execute("/etc/init.d/sio-agent start")
@@ -180,7 +180,7 @@ Rectangle {
     }
 
     TextInput {
-		/* This is how the ISP agent finds the version input field */
+		/* This objectName is how the ISP agent finds the version input field */
         objectName: "micro_input"
         id: micro_input
         x: 521
@@ -203,7 +203,7 @@ Rectangle {
 	
 	Text {
         id: txtStatus
-		/* This is how the ISP agent finds the status input field */
+		/* This objectName is how the ISP agent finds the status input field */
 		objectName: "txtStatus"
         x: 521
         y: 288

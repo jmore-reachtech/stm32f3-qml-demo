@@ -17,7 +17,7 @@ Rectangle {
 	}
 	
 	/* The mainview is listening for notReadyToSend signals. Watch that 
-		that property to make sure are are still connected */
+		that property to make sure we are still connected */
 	Connections {
         target: mainView
         onAppConnectedChanged: {
@@ -70,6 +70,7 @@ Rectangle {
         imageDown: "images/internal_button_dn.bmp"
         font.family: "DejaVu Sans"
         onButtonClick: {
+			/* Before loading the upgrade screen stop the SIO and TIO Agents */
             console.debug("Go to Upgrade view")
 			system.execute("/etc/init.d/tio-agent stop")
 			system.execute("/etc/init.d/sio-agent stop")
